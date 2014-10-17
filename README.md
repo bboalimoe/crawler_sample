@@ -1,2 +1,1 @@
-crawler_sample
-==============
+Cloud code project for crawler_sample. Cloud Code Guide: https://cn.avoscloud.com/docs/cloud_code_guide.html
