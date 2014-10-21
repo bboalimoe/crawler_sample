@@ -1,13 +1,18 @@
+
+
+
+
+
 var MQController = function (queueName, doTask) {
     var iron_mq = require('iron_mq'),
         imq = new iron_mq.Client({
-            token: "RnWnSp89ndWrVQGCZO837WWQX1s",
-            project_id: "5445f1eafa98270005000011",
+            token: "Vycchg8gKy52kHA9BAKSVcWc9QQ",
+            project_id: "543f8532d608d100090000a1",
             queue: queueName
         }),
         exceptionImq = new iron_mq.Client({
-            token: "RnWnSp89ndWrVQGCZO837WWQX1s",
-            project_id: "5445f1eafa98270005000011",
+            token: "Vycchg8gKy52kHA9BAKSVcWc9QQ",
+            project_id: "543f8532d608d100090000a1",
             queue: "failedTask"
         }),
         exceptionQueue = exceptionImq.queue('failedTask'),
@@ -24,7 +29,7 @@ var MQController = function (queueName, doTask) {
             deleteJob(job);
         },
         success = function (job) {
-            console.log('task success by heamon7');
+            console.log('task success');
             deleteJob(job);
         },
         exception = function (job) {
@@ -63,11 +68,10 @@ var MQController = function (queueName, doTask) {
 }
 
 
-var controller = new MQController("test_queue", function (task, success, failed) {
+var controller = new MQController("crawler_sample", function (task, success, failed) {
     console.log('work work');
     console.dir(JSON.parse(task.body));
     // Do something
     success();
 });
 controller.start();
-
