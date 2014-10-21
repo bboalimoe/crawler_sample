@@ -65,7 +65,7 @@ var MQController = function (queueName, doTask) {
 
 var controller = new MQController("test_queue", function (task, success, failed) {
     console.log('work work');
-    console.log(JSON.parse(task.body));
+    console.log(JSON.parse(task));
     // console.dir(JSON.parse(task.body));
     // Do something
     success();
