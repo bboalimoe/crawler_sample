@@ -1,74 +1,40 @@
-var MQController = function (queueName, doTask) {
-    var iron_mq = require('iron_mq'),
-        imq = new iron_mq.Client({
-            token: "RnWnSp89ndWrVQGCZO837WWQX1s",
-            project_id: "5445f1eafa98270005000011",
-            queue: queueName
-        }),
-        exceptionImq = new iron_mq.Client({
-            token: "RnWnSp89ndWrVQGCZO837WWQX1s",
-            project_id: "5445f1eafa98270005000011",
-            queue: "failedTask"
-        }),
-        exceptionQueue = exceptionImq.queue('failedTask'),
-        queue = imq.queue(queueName),
-        deleteJob = function (job) {
-            queue.del(job.id, function (error, body) {
-                console.log('job deleted success,%s', job.id);
-            }, function (err) {
-                console.log('job deleted failed,%s', job.id);
-            });
-        },
-        failed = function (job) {
-            console.log('task failed');
-            deleteJob(job);
-        },
-        success = function (job) {
-            console.log('task success by heamon7');
-            deleteJob(job);
-        },
-        exception = function (job) {
-            console.log('task exception');
-            exceptionQueue.post(job, function (error, body) {
-                console.log('task moved to failedTask,oldId=%s,newId=%s', job.id, body);
-            });
-            deleteJob(job);
-        };
+// Use AV.Cloud.define to define as many cloud functions as you want.
+// For example:
+//var request = require('request');
+//var cheerio = require('cheerio');
+var async = require('async');
+var _ = require('underscore');
+var fs = require('fs');
 
-    function fetchTask() {
-        queue.get({}, function (error, body) {
-            if (body) {
-                try {
-                    doTask(body, function () {
-                        success(body);
-                    }, function () {
-                        failed(body);
-                    });
-                } catch (err) {
-                    exception(body);
-                }
-                fetchTask();
-            } else {
-                setTimeout(fetchTask, 5000);
-            }
-        });
+var ContextLoader = function (appId, appKey) {
+ this.AV = null;
+ this.runInThis = function (script) {
+ eval(this.script);
+ this.AV.initialize(appId, appKey);
+ }
+ this.loadContext = function (appId, appKey) {
+ var code = fs.readFileSync('cloud/avoscloud-sdk/lib/av.js', {encoding: 'utf8'});
+ this.script = code;
+ this.runInThis.call(this);
+ }
+ this.loadContext(appId, appKey);
+ }
+
+ var techhackLoader =new ContextLoader('xv1cgfapsn90hyy2a42i9q6jg7phbfmdpt1404li6n93tt2r','70sp4h8prccxzyfp56vwm9ksczji36bsrjvtwzvrzegfza67')
+
+// input "websiteUrl" to crawling the  website and callback its websiteBody
+techhackLoader.AV.Cloud.run("hello", {name: 'dennis'}, {
+    success: function(data){
+        //调用成功，得到成功的应答data
+        console.log(data);
+    },
+    error: function(err){
+        //处理调用失败
     }
-
-    return {
-        start: function () {
-            console.log('start message queue');
-            fetchTask();
-        }
-    }
-}
-
-
-var controller = new MQController("test_queue", function (task, success, failed) {
-    console.log('work work');
-    console.log(JSON.parse(task));
-    // console.dir(JSON.parse(task.body));
-    // Do something
-    success();
 });
-controller.start();
 
+
+/*
+AV.Cloud.define("hello", function(request, response) {
+    response.success("Hello heamon7! Here is Techhack ! ");
+});*/
