@@ -13,7 +13,7 @@ var ContextLoader = function (appId, appKey) {
  this.AV.initialize(appId, appKey);
  }
  this.loadContext = function (appId, appKey) {
- var code = fs.readFileSync('cloud/avoscloud-sdk/lib/av.js', {encoding: 'utf8'});
+ var code = fs.readFileSync('./cloud/av.js', {encoding: 'utf8'});
  this.script = code;
  this.runInThis.call(this);
  }
